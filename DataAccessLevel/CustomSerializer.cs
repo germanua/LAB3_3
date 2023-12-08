@@ -27,7 +27,6 @@ namespace BusinessLogicLayer
                     if (line.EndsWith("?>"))
                     {
                         var serializedData = entity.ToString();
-                        // Change the Load method to use Deserialize instead of DeSerialize
                         reading.Add(Deserialize(serializedData));
                         entity.Clear();
                     }
@@ -41,7 +40,6 @@ namespace BusinessLogicLayer
             using StreamWriter writetext = new(_fileName);
             foreach (var obj in listToSave)
             {
-                // Change the Save method to use Serialize instead of your custom serialization
                 writetext.WriteLine(Serialize(obj));
             }
         }
