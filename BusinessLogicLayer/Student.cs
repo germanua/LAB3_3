@@ -7,8 +7,8 @@
         public string FullName { get; set; }
         public int YearOfBirth { get; set; }
         public int GroupNumber { get; set; }
-        public int CourseLevel { get; set; } // Add CourseLevel property
-
+        public int CourseLevel { get; set; } 
+        
         [NonSerialized]
         private string someTransientData; // Example of a non-serialized field
 
@@ -28,7 +28,7 @@
 
         public void TransferToNextCourse()
         {
-            CourseLevel++; // Increment the course level
+            CourseLevel++; 
         }
 
         public int CalculateAge()
