@@ -19,11 +19,11 @@ namespace BusinessLogicLayer
             GroupNumber = groupNumber;
             CourseLevel = courseLevel;
         }
-
         public Student() : base(0, "", DateTime.Now)
         {
             // Initialize any default values if needed
         }
+       
 
         public override string ToString()
         {

@@ -13,7 +13,7 @@ namespace BusinessLogicLayer
             _fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
             using (StreamWriter w = File.AppendText(_fileName))
             {
-                // You might want to do something here if needed
+                // treba
             }
         }
 
