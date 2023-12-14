@@ -38,6 +38,9 @@ public class Program
                     Menu.SaveData(studentList);
                     break;
                 case "7":
+                    Menu.CalculateSummerBirthdays(studentList);
+                    break;
+                case "8":
                     exit = true;
                     break;
                 default:

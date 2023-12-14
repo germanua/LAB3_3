@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using BusinessLogicLayer;
 
 namespace PresentationLevel;
@@ -14,8 +15,10 @@ public static class Menu
         Console.WriteLine("4. Find Student");
         Console.WriteLine("5. Show Student List");
         Console.WriteLine("6. Save Data");
-        Console.WriteLine("7. Exit");
+        Console.WriteLine("7. Calculate 3rd-year students born in summer");
+        Console.WriteLine("8. Exit");
     }
+    
 
     public static void ShowStudentList(List<Student> students)
     {
@@ -34,16 +37,16 @@ public static class Menu
 
             switch (choice)
             {
-                case 'L':
+                case 'l':
                     if (currentPage > 1)
                         currentPage--;
                     break;
-                case 'R':
+                case 'r':
                     int lastPage = (int)Math.Ceiling((double)students.Count / pageSize);
                     if (currentPage < lastPage)
                         currentPage++;
                     break;
-                case 'M':
+                case 'm':
                     return;
                 default:
                     Console.WriteLine("Invalid choice. Please enter a valid option.");
@@ -71,8 +74,8 @@ public static class Menu
         Console.Write("Enter Full Name: ");
         string name = GetValidFullName();
 
-        Console.Write("Enter Year of Birth: ");
-        int yearOfBirth = GetValidYearOfBirth();
+        Console.Write("Enter Date of Birth (dd-mm-yyyy): ");
+        DateTime dateOfBirth = GetValidDateOfBirth();
 
         Console.Write("Enter Group Number: ");
         int groupNumber = GetValidGroupNumber();
@@ -80,10 +83,40 @@ public static class Menu
         Console.Write("Enter Course Level: ");
         int courseLevel = GetValidCourseLevel();
 
-        Student newStudent = new Student(id, name, yearOfBirth, groupNumber, courseLevel);
+        Console.Write("Is the student a teacher? (true/false): ");
+        bool isTeacher = bool.Parse(Console.ReadLine());
+
+        Console.Write("Is the student an astronaut? (true/false): ");
+        bool isAstronaut = bool.Parse(Console.ReadLine());
+
+        Console.Write("Can the student sing? (true/false): ");
+        bool canSing = bool.Parse(Console.ReadLine());
+
+        Student newStudent = new Student(id, name, dateOfBirth, groupNumber, courseLevel)
+        {
+            IsTeacher = isTeacher,
+            IsAstronaut = isAstronaut,
+            CanSing = canSing
+        };
+
         studentList.Add(newStudent);
 
         Console.WriteLine("Student added successfully!");
+    }
+    private static DateTime GetValidDateOfBirth()
+    {
+        while (true)
+        {
+            Console.Write("Enter Date of Birth (dd-mm-yyyy): ");
+            string input = Console.ReadLine();
+
+            if (DateTime.TryParseExact(input, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth))
+            {
+                return dateOfBirth;
+            }
+
+            Console.WriteLine("Invalid input. Please enter a valid Date of Birth in dd-mm-yyyy format.");
+        }
     }
 
     public static void RemoveStudent(List<Student> studentList)
@@ -91,7 +124,7 @@ public static class Menu
         Console.Write("Enter Student ID to remove: ");
         int id = GetValidStudentId();
 
-        Student studentToRemove = studentList.FirstOrDefault(s => s.StudentId == id);
+        Student studentToRemove = studentList.FirstOrDefault(s => s.Id == id);
 
         if (studentToRemove != null)
         {
@@ -109,15 +142,15 @@ public static class Menu
         Console.Write("Enter Student ID to update: ");
         int id = GetValidStudentId();
 
-        Student studentToUpdate = studentList.FirstOrDefault(s => s.StudentId == id);
+        Student studentToUpdate = studentList.FirstOrDefault(s => s.Id == id);
 
         if (studentToUpdate != null)
         {
             Console.Write("Enter Full Name: ");
             string name = GetValidFullName();
 
-            Console.Write("Enter Year of Birth: ");
-            int yearOfBirth = GetValidYearOfBirth();
+            Console.Write("Enter Date of Birth (dd-mm-yyyy): ");
+            DateTime dateOfBirth = GetValidDateOfBirth();
 
             Console.Write("Enter Group Number: ");
             int groupNumber = GetValidGroupNumber();
@@ -127,7 +160,12 @@ public static class Menu
 
             studentList.Remove(studentToUpdate);
 
-            Student updatedStudent = new Student(id, name, yearOfBirth, groupNumber, courseLevel);
+            Student updatedStudent = new Student(id, name, dateOfBirth, groupNumber, courseLevel)
+            {
+                IsTeacher = studentToUpdate.IsTeacher,
+                IsAstronaut = studentToUpdate.IsAstronaut,
+                CanSing = studentToUpdate.CanSing
+            };
             studentList.Add(updatedStudent);
 
             Console.WriteLine("Student updated successfully!");
@@ -138,12 +176,13 @@ public static class Menu
         }
     }
 
+
     public static void FindStudent(List<Student> studentList)
     {
         Console.Write("Enter Student ID to find: ");
         int id = GetValidStudentId();
 
-        Student studentToFind = studentList.FirstOrDefault(s => s.StudentId == id);
+        Student studentToFind = studentList.FirstOrDefault(s => s.Id == id);
 
         if (studentToFind != null)
         {
@@ -153,6 +192,18 @@ public static class Menu
         {
             Console.WriteLine("Student not found.");
         }
+    }
+
+    public static void CalculateSummerBirthdays(List<Student> students)
+    {
+        int currentYear = DateTime.Now.Year;
+        int thirdYear = currentYear - 2;
+
+        var summerBirthdays = students
+            .Where(student => student.CourseLevel == 3 && student.DateOfBirth.Month >= 6 && student.DateOfBirth.Month <= 8)
+            .Count();
+
+        Console.WriteLine($"Number of 3rd-year students born in summer: {summerBirthdays}");
     }
 
     private static int GetValidStudentId()
